@@ -1,100 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Linux scratchpad</title>
-  <meta name="author" content="Joel Fernandes">
-
-  
-  <meta name="description" content="Having read the chapter on counting and per-CPU counters in Paul Mckenney&rsquo;s recent book, I thought I would do a small experiment to check how &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://joelagnel.github.io">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Linux scratchpad" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Linux scratchpad</a></h1>
-  
-    <h2>Joel Fernandes' notes on Linux, embedded, architecture and algorithms.</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:joelagnel.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+  <title><![CDATA[Linux scratchpad]]></title>
+  <link href="http://joelagnel.github.io/atom.xml" rel="self"/>
+  <link href="http://joelagnel.github.io/"/>
+  <updated>2014-04-24T21:58:54-05:00</updated>
+  <id>http://joelagnel.github.io/</id>
+  <author>
+    <name><![CDATA[Joel Fernandes]]></name>
     
-      <h1 class="entry-title"><a href="/blog/2014/04/24/studying-cache-line-sharing-effects-on-smp-systems/">Studying Cache-line Sharing Effects on SMP Systems</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2014-04-24T20:28:24-05:00" pubdate data-updated="true">Apr 24<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Having read the chapter on counting and per-CPU counters in <a href="http://www.lulu.com/shop/paul-e-mckenney/is-parallel-programming-hard-and-if-so-what-can-you-do-about-it-first-bw-print-edition/paperback/product-21562459.html">Paul Mckenney&rsquo;s recent book</a>, I thought I would do a small experiment to check how good or bad it would be if those per-CPU counters were close to each other in memory.</p>
+  <entry>
+    <title type="html"><![CDATA[Studying Cache-line Sharing Effects on SMP Systems]]></title>
+    <link href="http://joelagnel.github.io/blog/2014/04/24/studying-cache-line-sharing-effects-on-smp-systems/"/>
+    <updated>2014-04-24T20:28:24-05:00</updated>
+    <id>http://joelagnel.github.io/blog/2014/04/24/studying-cache-line-sharing-effects-on-smp-systems</id>
+    <content type="html"><![CDATA[<p>Having read the chapter on counting and per-CPU counters in <a href="http://www.lulu.com/shop/paul-e-mckenney/is-parallel-programming-hard-and-if-so-what-can-you-do-about-it-first-bw-print-edition/paperback/product-21562459.html">Paul Mckenney&rsquo;s recent book</a>, I thought I would do a small experiment to check how good or bad it would be if those per-CPU counters were close to each other in memory.</p>
 
 <p>Paul talks about using one global shared counter for N threads on N CPUs, and the effects it can have on the cache. Each CPU core&rsquo;s cache in an SMP system will need exclusive rights on a specific cache line of memory, before it can do the write. This means that, at any given time <em>only one</em> CPU can and should do a write to that part of memory.</p>
 
@@ -109,57 +33,30 @@
 <p>Below are the results of running the program on 3 different SMP systems (2 threads on 2 CPUs, sorry I don&rsquo;t have better multi-core hardware ATM):</p>
 
 <p>Effect of running on a reference ARM Dual-core Cortex-A9 system:
-<img src="/images/cache-sharing/a9-counts.jpeg"></p>
+<img src="http://joelagnel.github.io/images/cache-sharing/a9-counts.jpeg"></p>
 
 <p>Notice the jump in through-put once the separation changes from 16 to 32 bytes. That gives us a good idea that the L1 cache line size on Cortex-A9 systems is 32 bytes (8 words). Something the author didn&rsquo;t know for sure in advance (I initially thought it was 64-bytes).</p>
 
 <p>Effect of running on a reference ARM dual-core Cortex-A15 system:
-<img src="/images/cache-sharing/a15-counts.jpeg"></p>
+<img src="http://joelagnel.github.io/images/cache-sharing/a15-counts.jpeg"></p>
 
 <p>L1 Cache-line size of Cortex A-15 is 64 bytes (8 words). Expected jump for a separation of 64 bytes.</p>
 
 <p>Effect of running on a x86-64 i7-3687U Dual core CPU:
-<img src="/images/cache-sharing/x86-counts.jpeg">.</p>
+<img src="http://joelagnel.github.io/images/cache-sharing/x86-counts.jpeg">.</p>
 
 <p>L1 Cache-line size of this CPU is 64 bytes too (8 words). Expected jump for a separation of 64 bytes.</p>
 
 <p>This shows your parallel programs need to take care of cache-line alignment to avoid false-sharing effects. Also, doing something like this in your program is an indirect way to find out what the cache-line size is for your CPU, or a direct way to get fired, whichever way you want to look at it. ;)</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/04/22/design-of-fork-followed-by-exec-in-linux/">Design of Fork Followed by Exec in Linux</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-22T23:06:11-05:00" pubdate data-updated="true">Apr 22<span>nd</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>A popular topic among new Linux programmers is <em>why do you have to do fork and then an exec, to execute a new program?</em> and <em>why can&rsquo;t it be done in one step?</em> or <em>why does fork <a href="http://man7.org/linux/man-pages/man2/fork.2.html">create a copy-on-writed address space</a>, to only have it thrown away later when you do an exec?</em> So I decided do a small write up about this topic, also as a way to teach myself.</p>
+  <entry>
+    <title type="html"><![CDATA[Design of Fork Followed by Exec in Linux]]></title>
+    <link href="http://joelagnel.github.io/blog/2014/04/22/design-of-fork-followed-by-exec-in-linux/"/>
+    <updated>2014-04-22T23:06:11-05:00</updated>
+    <id>http://joelagnel.github.io/blog/2014/04/22/design-of-fork-followed-by-exec-in-linux</id>
+    <content type="html"><![CDATA[<p>A popular topic among new Linux programmers is <em>why do you have to do fork and then an exec, to execute a new program?</em> and <em>why can&rsquo;t it be done in one step?</em> or <em>why does fork <a href="http://man7.org/linux/man-pages/man2/fork.2.html">create a copy-on-writed address space</a>, to only have it thrown away later when you do an exec?</em> So I decided do a small write up about this topic, also as a way to teach myself.</p>
 
 <p>On a separate note, firstly it is important to remember that <code>fork</code> is not used for threading, its primary use is to create a separate process, that is a child of the one that called <code>fork</code>.</p>
 
@@ -224,72 +121,7 @@ There you go, now when the COW memory region is written to, a page fault happens
 <p>There is one optimization however, why should you have to do this marking for pages that are not physically present in memory? Those will fault anyway. So the above code is <em>not run</em> if the page is not present, nicely done by checking for <a href="http://lxr.free-electrons.com/source/mm/memory.c#L807">!pte_present(pte)</a> to be true before the preceding code.</p>
 
 <p>Please share any comments you may have in the comments section.</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/04/24/studying-cache-line-sharing-effects-on-smp-systems/">Studying Cache-line Sharing Effects on SMP Systems</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/22/design-of-fork-followed-by-exec-in-linux/">Design of Fork Followed by Exec in Linux</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Joel Fernandes -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>
