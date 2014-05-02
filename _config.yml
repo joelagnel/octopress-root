@@ -2,10 +2,10 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://yoursite.com
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+url: http://www.linuxinternals.org
+title: scratchpad
+subtitle: Joel's notes on OS internals, embedded, architecture and algorithms.
+author: Joel Fernandes
 simple_search: https://www.google.com/search
 description:
 
