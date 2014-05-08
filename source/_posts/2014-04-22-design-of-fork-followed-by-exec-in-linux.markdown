@@ -6,7 +6,7 @@ comments: true
 categories: 
 ---
 A lot of folks ask *why do you have to do fork and then an exec, to execute a new program?* and *why can't it be done in one step?", or "why does fork [create a copy-on-writed address space](http://man7.org/linux/man-pages/man2/fork.2.html), to only have it thrown away later when you do an exec?". So I decided do a small write up about this topic.
-
+ 
 On a separate note, firstly it is important to remember that `fork` is not used for threading, its primary use is to create a separate process, that is a child of the one that called `fork`.
 
 Normally one might think that doing a `fork` and `exec` calls can be combined in one step, and it probably should be. But there are applications of maintaining this separation. Here's a [post that explains](http://stackoverflow.com/questions/1345320/applications-of-fork-system-call) why you might need to do just a `fork` call. Summarizing the post, you may need to setup some initial data and "fork" a bunch of workers. All these works are supposed to execute in *their own* address space and share *only the initial data*. In this case, copy-on-write is extremely useful since the initial data can be shared in physical memory and forking would be extremely. The kernel marks all these shared pages as read only, and makes writable copies on writes.
