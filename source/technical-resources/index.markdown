@@ -29,6 +29,9 @@ Advanced
 * [Paul M's article explaining the memory modeling tools - validating memory barriers](http://lwn.net/Articles/470681/)
 * [Paper on POWER memory model, similar to ARM](http://www.cl.cam.ac.uk/~pes20/ppc-supplemental/pldi105-sarkar.pdf)
 
+Linking Loading, shared libraries
+* [Hands-on dissection of PLT and GOT](https://www.technovelty.org/linux/plt-and-got-the-key-to-code-sharing-and-dynamic-libraries.html)
+
 Misc
 
 * [ACP (Accelerator Coherency Port) for coherent access by ARM-external Masters](http://www.googoolia.com/downloads/papers/sadri_fpgaworld_ver2.pdf)
@@ -37,3 +40,6 @@ Misc
 ##### Super capacitors
 * [Good video on Super Cap + Boost Converter circuits](http://www.instructables.com/id/The-Forever-Rechargeable-VARIABLE-Super-Capacitor-/)
 * [Capacitor Basics](http://www.schoolphysics.co.uk/age16-19/Electricity%20and%20magnetism/Electrostatics/text/Capacitor_charge_and_discharge/index.html)
+
+#### Drones
+* [Linux and UAVs, a great overview of some of the projects](https://www.linux.com/news/embedded-mobile/mobile-linux/773231-linux-takes-to-the-skies-in-drones)
