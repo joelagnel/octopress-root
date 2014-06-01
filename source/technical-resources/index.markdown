@@ -22,7 +22,9 @@ Basics
 - [C11 atomic variables and the kernel](http://lwn.net/Articles/586838/)
 - [C11 memory models](http://en.cppreference.com/w/cpp/atomic/memory_order)
 - [C11 memory models - gcc wiki](http://gcc.gnu.org/wiki/Atomic/GCCMM/AtomicSync)
+- [SMP Primer for Android](http://developer.android.com/training/articles/smp.html)
 - [Effect of Write Combining in L1 Buffers](http://mechanical-sympathy.blogspot.com/2011/07/write-combining.html)
+- [Shared Memory Consistency Models:A Tutorial](http://www.hpl.hp.com/techreports/Compaq-DEC/WRL-95-7.pdf)
 
 Advanced
 
@@ -30,6 +32,7 @@ Advanced
 * [Paper on POWER memory model, similar to ARM](http://www.cl.cam.ac.uk/~pes20/ppc-supplemental/pldi105-sarkar.pdf)
 
 Linking Loading, shared libraries
+
 * [Hands-on dissection of PLT and GOT](https://www.technovelty.org/linux/plt-and-got-the-key-to-code-sharing-and-dynamic-libraries.html)
 
 Misc
@@ -37,6 +40,8 @@ Misc
 * [ACP (Accelerator Coherency Port) for coherent access by ARM-external Masters](http://www.googoolia.com/downloads/papers/sadri_fpgaworld_ver2.pdf)
 
 #### Electronics
+* [NAND flash internals - great primer](http://vjswami.com/2013/11/11/a-primer-on-flash-and-a-look-into-the-challenges-of-designing-an-all-flash-array/)
+
 ##### Super capacitors
 * [Good video on Super Cap + Boost Converter circuits](http://www.instructables.com/id/The-Forever-Rechargeable-VARIABLE-Super-Capacitor-/)
 * [Capacitor Basics](http://www.schoolphysics.co.uk/age16-19/Electricity%20and%20magnetism/Electrostatics/text/Capacitor_charge_and_discharge/index.html)
