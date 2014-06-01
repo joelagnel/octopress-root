@@ -41,6 +41,7 @@ Misc
 
 #### Electronics
 * [NAND flash internals - great primer](http://vjswami.com/2013/11/11/a-primer-on-flash-and-a-look-into-the-challenges-of-designing-an-all-flash-array/)
+* [NAND flash Organization - lots of info](http://www.lostcircuits.com/mambo//index.php?option=com_content&task=view&id=72&Itemid=46&limit=1&limitstart=4)
 
 ##### Super capacitors
 * [Good video on Super Cap + Boost Converter circuits](http://www.instructables.com/id/The-Forever-Rechargeable-VARIABLE-Super-Capacitor-/)
