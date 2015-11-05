@@ -3,8 +3,8 @@
 # ----------------------- #
 
 url: http://www.linuxinternals.org
-title: scratchpad
-subtitle: Joel's notes on OS internals, embedded, architecture and algorithms.
+title: LinuxInternals.org
+subtitle: Tinkering with Embedded Linux
 author: Joel Fernandes
 simple_search: https://www.google.com/search
 description:
