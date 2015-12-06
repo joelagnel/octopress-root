@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source ~/.rvm/src/rvm/scripts/rvm 
+rvm use 1.9.3
+
