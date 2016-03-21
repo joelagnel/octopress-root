@@ -10,10 +10,11 @@ categories:
 
 Preemption
 ----------
-Kernel Preemption is the process of forceably grabbing CPU from a user or kernel context and giving it to someone else (user or kernel). It is the primary means for timesharing a CPU between competing tasks (I will use task as terminology for process).
+Preemption is the process of forceably grabbing CPU from a user or kernel context and giving it to someone else (user or kernel). It is the means for timesharing a CPU between competing tasks (I will use task as terminology for process).
 In Linux, the way it works is a timer interrupt (called the tick) interrupts the task that is running and makes a decision about whether a task or a kernel code path (executing on behalf of a task like in a syscall) is to be preempted. This decision is based on whether the task has been running long-enough and something higher priority woke up and needs CPU now, or is ready to run.
 
 These things happen in `scheduler_tick()`, the exact path is *TIMER HARDWARE INTERRUPT* -> `scheduler_tick` -> `task_tick_fair` -> `entity_tick` -> `check_preempt_tick`.
+`entity_tick()` updates various run time statistics of the task, and `check_preempt_tick()` is where TIF_NEED_RESCHED is set.
 
 Here's a small bit of code in `check_preempt_tick`
 ```
@@ -37,8 +38,17 @@ check_preempt_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr)
 ```
 Here you see a decision is made that the process ran long enough based on its runtime and if so call `resched_curr`. Turns out `resched_curr` sets the `TIF_NEED_RESCHED` for the current task! This informs whoever looks at the flag, that this process should be scheduled out soon.
 
-Even though this flag is set at this point, the task is not going to be preempted yet. This is because preemption happens at specific points such as exit of interrupts. If the flag is set because the timer interrupt decided that something of higher priority needs CPU now, then at the exit of the timer interrupt (interrupt exit path), `TIF_NEED_RESCHED` is checked, and because it is set - `schedule()` is called causing context switch to happen to another process of higher priority, instead of just returning to the process that the timer interrupted like it normally would.
-While I haven't nailed down the exact line of code in the interrupt exit path to user land that does this, I do believe the interrupt exit path to kernel space does a call to `preempt_schedule_irq` (see `arch/x86/entry/entry_64.S`) that checks for `TIF_NEED_RESCHED` and if it is set, then calls the context-switch code in the scheduler. These are just details though and what's important to understand is the `TIF_NEED_RESCHED` caused the preemption to eventually happen.
+Even though this flag is set at this point, the task is not going to be preempted yet. This is because preemption happens at specific points such as exit of interrupts. If the flag is set because the timer interrupt (scheduler decided) decided that something of higher priority needs CPU now and sets `TIF_NEED_RESCHED`, then at the exit of the timer interrupt (interrupt exit path), `TIF_NEED_RESCHED` is checked, and because it is set - `schedule()` is called causing context switch to happen to another process of higher priority, instead of just returning to the existing process that the timer interrupted normally would.
+Lets examine where this happens.
+
+For return from interrupt to user-mode:
+
+If the tick interrupt happened user-mode code was running, then in somewhere in the interrupt exit path for x86, this call chain calls schedule `ret_from_intr` -> `reint_user` -> `prepare_exit_to_usermode`. Here the need_reched flag is checked, and if true `schedule()` is called.
+
+For return from interrupt to kernel mode, things are a bit different (skip this para if you think it'll confuse you).
+
+This feature requires kernel preemption to be enabled. The call chain doing the preemption is: `ret_from_intr` -> `reint_kernel` -> `preempt_schedule_irq` (see `arch/x86/entry/entry_64.S`) which calls `schedule`.
+Note that, for return to kernel mode, I see that `preempt_schedule_irq` calls `schedule` anyway whether need_resched flag is set or not, this is probably Ok but I am wondering if need_resched should be checked here before `schedule` is called. Perhaps it would be an optimiziation to avoid unecessarily calling `schedule`. One reason for not doing so would be, say any other interrupt other than timer tick is returning to the interrupted kernel space, then in these cases for example - if the timer tick didn't get a chance to run (because all other local interrupts are disabled in Linux until an interrupt finishes, in this case our non-timer interrupt), then we'd want the exit path of the non-timer interrupt to behave just like the exit path of the timer tick interrupt would behave, whether need_resched is set or not.
 
 Critical sections in kernel code where preemption is off
 --------------------------------------------------------
