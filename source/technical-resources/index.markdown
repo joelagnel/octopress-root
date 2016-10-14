@@ -6,6 +6,9 @@ comments: true
 sharing: true
 footer: true
 ---
+#### My Presentations
+[ELCE 2016: Debugging Real-Time issues in Linux](/technical-resources/elce2016-debug-rt.pdf)
+
 #### Low-level, ASM
 * [Tim Bird's Ftrace function-graph paper](http://elinux.org/images/0/0c/Bird-LS-2009-Measuring-function-duration-with-ftrace.pdf)
 
