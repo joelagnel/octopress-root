@@ -6,7 +6,7 @@ $header-bg: #263347;
 $nav-bg: #ccc;
 $nav-color: darken($nav-bg, 60);
 $nav-color-hover: red !default;
-//$subtitle-color: lighten($header-bg, 58);
+$subtitle-color: #ccc;
 $nav-bg: desaturate(lighten(#749cdc, 18), 5);
 //$nav-bg-front: image-url('noise.png');
 //$nav-bg-back: linear-gradient(lighten($nav-bg, 8), $nav-bg, darken($nav-bg, 11));
