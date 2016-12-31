@@ -1,9 +1,9 @@
 ---
 layout: page
 title: "About me"
-date: 2015-12-20 16:07
 comments: false
 sharing: false
+sidebar: false
 footer: true
 ---
 I'm Joel and I run this site!
