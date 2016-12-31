@@ -6,9 +6,7 @@ comments: true
 categories: 
 ---
 
-Non-maskable interrupts (NMI) is a great debug feature that hardware can provide.
-
-Some great Linux kernel features that rely on NMI to work properly are:
+Non-maskable interrupts (NMI) is a great debug feature that hardware can provide. Some great Linux kernel features that rely on NMI to work properly are:
 
 * Backtrace from all CPUs: A number of places in the kernel rely on dumping the stacks of all CPUs at the time of a failure to determine what was going on. Some of them are [Hung Task detection](http://lxr.free-electrons.com/source/kernel/hung_task.c), [Hard/soft lockup detector](http://lxr.free-electrons.com/source/Documentation/lockup-watchdogs.txt) and spinlock debugging code.
 
@@ -16,7 +14,7 @@ Some great Linux kernel features that rely on NMI to work properly are:
 
 Below is a [flamegraph](http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html) generated with perf and some flamegraph magic, that shows just what happens when perf is used in an architecture like ARM that doesn't support NMI. The flamegraph is generated on an ARMv8 platform:
 
-{% img /images/nmi/flamegraph.png }
+{% img /images/nmi/flamegraph.png %}
 
 As you can see in the area of the flamegraph where the arrow is pointed, a large amount of time is spent in `_raw_spin_unlock_irqrestore()`. It can baffle anyone looking at this data for the first time, and make them think that most of the time is spent in this function. What's actually happenning is because perf is using a maskable interrupt in ARMv8 to profile, any section of code that disables interrupts will not be see in the flamegraph. In other words perf is unable to peek into sections of code where interrupts are disabled. As a result, when interrupts are reenabled during the `_raw_spin_unlock_irqrestore`, the perf interrupt routine then kicks in and records the large number of samples that elapsed in the interrupt-disable section. This recording accounts all these samples to the _raw_spin_unlock_restore function, hence the flamegraph anomoly. It is indeed quite sad that ARM still doesn't have a true NMI which perf would love to make use of.
 
@@ -25,7 +23,7 @@ BUT! [Daniel Thomspon](https://lkml.org/lkml/2016/8/19/583) has been hard at wor
 To simulate an NMI, Daniel creates 2 groups of interrupts in his patchset. One group is for all 'normal' interrupts, and the other for non-maskable interrupts (NMI). Non-maskable interrupts are assigned a higher priority than the normal interrupt group. Inorder to 'mask' interrupts in this approach, Daniel replaces the regular interrupt masking scheme in the kernel which happens at the CPU-core level, with setting of the interrupt controller's PMR (priority mask register). When the PMR is set to a certain value, only interrupts which have a higher priority than what's in the PMR will be signaled to a CPU core, all other interrupts will be silenced (masked). By using this technique, it is possible to mask normal interrupts while keeping the NMI unmasked all the time.
 
 Just how does he do this? So, a small primer on interrupts in the ARM world.
-ARM uses the GIC (Generic interrupt controller)[http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dai0176c/ar01s03s01.html] to prioritize and route interrupts to CPU cores. GIC interrupt priorties go from 0 to 255. 0 being highest and 255 being the lowest. By default, the kernel [assigns priority 0xa0 (192)](http://lxr.free-electrons.com/source/include/linux/irqchip/arm-gic.h?v=4.8#L57) to all interrupts. He changes this default priority from 0xa0 to 0xc0 (you'll see why).
+ARM uses the GIC [Generic interrupt controller](http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dai0176c/ar01s03s01.html) to prioritize and route interrupts to CPU cores. GIC interrupt priorties go from 0 to 255. 0 being highest and 255 being the lowest. By default, the kernel [assigns priority 0xa0 (192)](http://lxr.free-electrons.com/source/include/linux/irqchip/arm-gic.h?v=4.8#L57) to all interrupts. He changes this default priority from 0xa0 to 0xc0 (you'll see why).
 He then defines what values of PMR would be consider as "unmasked" vs "masked". Masked is 0xb0 and unmasked is 0xf0. This results in the following priorities (greater numbers are lower priority).
 ```
 0xf0 (240 decimal)  (11110000 binary) - Interrupts Unmasked (enabled)
