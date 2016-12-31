@@ -20,6 +20,8 @@ As you can see in the area of the flamegraph where the arrow is pointed, a large
 
 BUT! [Daniel Thompson](https://lkml.org/lkml/2016/8/19/583) has been hard at work trying to simulate Non-maskable interrupts on ARMv8. The idea is [based on using interrupt priorities](/misc/arm-irq-priortization-white-paper.pdf) and is the subject of the rest of this post.
 
+NMI Simulation using priorities
+-------------------------------
 To simulate an NMI, Daniel creates 2 groups of interrupts in his patchset. One group is for all 'normal' interrupts, and the other for non-maskable interrupts (NMI). Non-maskable interrupts are assigned a higher priority than the normal interrupt group. Inorder to 'mask' interrupts in this approach, Daniel replaces the regular interrupt masking scheme in the kernel which happens at the CPU-core level, with setting of the interrupt controller's PMR (priority mask register). When the PMR is set to a certain value, only interrupts which have a higher priority than what's in the PMR will be signaled to a CPU core, all other interrupts will be silenced (masked). By using this technique, it is possible to mask normal interrupts while keeping the NMI unmasked all the time.
 
 Just how does he do this? So, a small primer on interrupts in the ARM world.
@@ -33,4 +35,20 @@ He then defines what values of PMR would be consider as "unmasked" vs "masked". 
 ```
 In this new scheme, when interrupts are to be masked (disabled), the PMR is set to 0xf0 and when they are unmasked (enabled), the PMR is set to 0xb0. As you can see, setting the PMR to 0xb0 indeed masks normal interrupts, because 0xb0(PMR) < 0xc0(Normal), however non-maskable interrupts still stay unmasked as 0x80(NMI) < 0xb0(PMR). Also notice that inorder to mask/unmask interrupts, all that needs to be done is flip bit 7 in the PMR (0xb0 -> 0xf0). Daniel largely uses Bit 7 as the mask bit in the patchset.
 
-Daniel has tested his patchset only on the foundation model yet, but it appears that the patch series with modifications should work on the newer Qualcomm chipsets that have the necessary GIC (Generic interrupt controller) access from the core to muck with IRQ priorities. Also, currently Daniel has only implemented CPU backtrace, more work needs to be done for perf support which I'll look into if I can get backtraces working properly on real silicon first.
+Quirk 1: Saving of the PMR context during traps
+-----------------------------------------------
+Its suggested in the patchset that during traps, the priority value set in the PMR needs to be saved because it may change during traps. To facilitate this, Daniel found a dummy bit in the PSTATE register (PSR). During any exception, Bit 7 of of the PMR is saved into a PSR bit (he calls it the G bit) and restores it on return from the exception. Look at the changes to `kernel_entry` macro in the setfor this code.
+
+Quirk 2: Ack of masked interrupts
+---------------------------------
+Note that interrupts are masked before the GIC interrupt controller code can even identify the source of the interrupt. When the GIC code eventually runs, it is tasked with identifying the interrupt source. It does so by reading the `IAR` register. This read also has the affecting of "Acking" the interrupt - in other words, telling the GIC that the kernel has acknowledged the interrupt request for that particular source. Daniel points out that, because the new scheme uses PMR for interrupt masking, its no longer possible to ACK interrupts without first unmasking them (by resetting the PMR) so he temporarily resets PMR, does the `IAR` read, and restores it. Look for the code in `gic_read_iar_common` in his patchset to handle this case.
+
+Open questions I have
+---------------------
+- Where in the patchset does Daniel mask NMIs once an NMI is in progress, or is this even needed?
+
+Future work
+-----------
+Daniel has tested his patchset only on the foundation model yet, but it appears that the patch series with modifications should work on the newer Qualcomm chipsets that have the necessary GIC (Generic interrupt controller) access from the core to mess with IRQ priorities. Also, currently Daniel has only implemented CPU backtrace, more work needs to be done for perf support which I'll look into if I can get backtraces working properly on real silicon first.
+
+
