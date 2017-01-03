@@ -1,18 +1,18 @@
 ---
 layout: post
-title: "ARMv8 and NMI support"
+title: "ARMv8: flamegraph and NMI support"
 date: 2016-12-31 22:29:26 -0700
 comments: true
 categories: 
 ---
 
-Non-maskable interrupts (NMI) is a really useful feature for debugging, that hardware can provide. Some great Linux kernel features that rely on NMI to work properly are:
+Non-maskable interrupts (NMI) is a really useful feature for debugging, that hardware can provide. Unfortunately ARM doesn't provide an out-of-the-box NMI interrupt mechanism. This post shows a flamegraph issue due to missing NMI support, and the upstream work being done to simulate NMI in ARMv8.
+
+Some great Linux kernel features that rely on NMI to work properly are:
 
 * Backtrace from all CPUs: A number of places in the kernel rely on dumping the stacks of all CPUs at the time of a failure to determine what was going on. Some of them are [Hung Task detection](http://lxr.free-electrons.com/source/kernel/hung_task.c), [Hard/soft lockup detector](http://lxr.free-electrons.com/source/Documentation/lockup-watchdogs.txt) and spinlock debugging code.
 
-* Perf profiling: To be able to profile code that runs in interrupt handlers, or in sections of code that disable interrupts, Perf works well only when NMI is available in the architecture.
-
-Unfortunately ARM doesn't provide an out-of-the-box NMI interrupt mechanism. Below is a [flamegraph](http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html) generated with perf and some flamegraph magic, that shows just what happens when perf is used in an architecture like ARM that doesn't support NMI. The flamegraph is generated on an ARMv8 platform:
+* Perf profiling and flamegraphs: To be able to profile code that runs in interrupt handlers, or in sections of code that disable interrupts, Perf relies on NMI support in the architecture. [flamegraphs](http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html) are a great visual representation of perf profile output. Below is a flamegraph I generated from perf profile output, that shows just what happens on an architecture like ARMv8 with missing NMI support. Perf is using maskable-interrupts on this platform for profiling:
 
 {% img /images/nmi/flamegraph.png %}
 
@@ -37,7 +37,7 @@ In this new scheme, when interrupts are to be masked (disabled), the PMR is set 
 
 Quirk 1: Saving of the PMR context during traps
 -----------------------------------------------
-Its suggested in the patchset that during traps, the priority value set in the PMR needs to be saved because it may change during traps. To facilitate this, Daniel found a dummy bit in the PSTATE register (PSR). During any exception, Bit 7 of of the PMR is saved into a PSR bit (he calls it the G bit) and restores it on return from the exception. Look at the changes to `kernel_entry` macro in the setfor this code.
+Its suggested in the patchset that during traps, the priority value set in the PMR needs to be saved because it may change during traps. To facilitate this, Daniel found a dummy bit in the PSTATE register (PSR). During any exception, Bit 7 of of the PMR is saved into a PSR bit (he calls it the G bit) and restores it on return from the exception. Look at the changes to `kernel_entry` macro in the set for this code.
 
 Quirk 2: Ack of masked interrupts
 ---------------------------------

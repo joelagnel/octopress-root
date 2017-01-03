@@ -1,20 +1,20 @@
 ---
 layout: page
-title: "About me"
+title: false
 comments: false
 sharing: false
 sidebar: false
 footer: true
 ---
-I'm Joel and I run this site!
-Love working on all things Embedded and Linux for fun and profit.
+Hi! I'm Joel and I run this site! I'm a Linux developer and contributor. I work in the Android performance team at Google and strive to make Android fast and energy efficient.
 
-Email	: [joel@linuxinternals.org](mailto:joel@linuxinternals.org)
+LinuxInternals.org is a resource I created as a collection of articles and resources exploring Linux Internals and Linux kernel related topics. At times I may write about hardware topics as well. I frequently conduct [meetups](https://www.meetup.com/LinuxInternals/) to discuss a particular internals topic.
 
-Google+	: [Follow me](https://plus.google.com/102415785508850230338)
+Follow me on [Twitter](https://twitter.com/joel_linux), [Google+](https://plus.google.com/102415785508850230338) and [LinkedIn](https://www.linkedin.com/in/joelagnel)
 
-Code	: [GitHub](https://github.com/joelagnel/)
+[My resume](/joel/joel-resume.pdf) covers a lot about my background and work experience.
 
-Resume	: [Download PDF](/aboutme/joel-resume.pdf)
+[Here's a list](https://patchwork.kernel.org/project/LKML/list/?submitter=170577) of recent kernel patches I submitted. I got [featured on hackaday](http://hackaday.com/2014/06/08/the-in-circuit-sd-card-switch/) some time back.
 
-LinkedIn: [https://www.linkedin.com/in/joelagnel](https://www.linkedin.com/in/joelagnel)
+Email me at: [joel@linuxinternals.org](mailto:joel@linuxinternals.org)
+
