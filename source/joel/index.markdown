@@ -8,7 +8,7 @@ footer: true
 ---
 Hi! I'm Joel and I run this site! I'm a Linux kernel developer and work in the Android kernel team at Google. My interests are scheduler, tracing, synchronization and kernel internals.
 
-LinuxInternals.org is a resource I created as a collection of articles and resources exploring Linux Internals and Linux kernel related topics. At times I may write about hardware topics as well. I frequently conduct [meetups](https://www.meetup.com/LinuxInternals/) to discuss a particular internals topic.
+LinuxInternals.org is a resource I created as a collection of articles and resources exploring Linux Internals and Linux kernel related topics. At times I may write about hardware topics as well.
 
 Follow me on [Twitter](https://twitter.com/joel_linux), [Google+](https://plus.google.com/102415785508850230338) and [LinkedIn](https://www.linkedin.com/in/joelagnel)
 
