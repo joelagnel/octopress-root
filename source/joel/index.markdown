@@ -6,7 +6,7 @@ sharing: false
 sidebar: false
 footer: true
 ---
-Hi! I'm Joel and I run this site! I'm a Linux developer and contributor. I work in the Android performance team at Google and strive to make Android fast and energy efficient.
+Hi! I'm Joel and I run this site! I'm a Linux developer and contributor. I work in the Android kernel team at Google and strive to make Android fast and energy efficient.
 
 LinuxInternals.org is a resource I created as a collection of articles and resources exploring Linux Internals and Linux kernel related topics. At times I may write about hardware topics as well. I frequently conduct [meetups](https://www.meetup.com/LinuxInternals/) to discuss a particular internals topic.
 
