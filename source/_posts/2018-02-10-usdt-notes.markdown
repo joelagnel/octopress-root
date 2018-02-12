@@ -94,9 +94,9 @@ Open question I have:
 
 Other ideas
 -----------
-* Creating Uprobes on the fly when a process is loaded: Ideally speaking, if the ELF note section had all the information that the kernel needed, then we could create the Uprobe events for the uprobe trace events at load time and keep them disabled without needing userspace to do anything else. This seems crude at first, but in the "default" case, it would still have almost no-overhead. This does mean that all the information Uprobe tracing needs will have to be stored in the note section. The other nice thing about this is, you no longer need to know the PID of all processes with USDTs in them.
+* Creating Uprobes on the fly when a process is loaded: Ideally speaking, if the ELF note section had all the information that the kernel needed, then we could create the Uprobe events for the uprobe trace events at load time and keep them disabled without needing userspace to do anything else. This seems crude at first, but in the "default" case, it would still have almost no-overhead. This does mean that all the information Uprobe tracing needs will have to be stored in the note section. The other nice thing about this is, you no longer need to know the PID of all processes with USDTs in them. EDIT: This idea is flawed. Uprobes are created before a process is loaded AFAIU now, using the binary path of the executable and libraries. What's more useful is to maintain a cache of all executables in the file system, and their respective instrumentation points. Then on boot up, perhaps we can create all necessary uprobes from early userspace.
 
-* For dynamic languages, `libstapsdt` seems great, but it feels a bit hackish since it creates a temporary file for the stub. Perhaps uprobes can be created after the temporary file is dlopen'ed and then the file can be unlinked if it hasn't been already, so that there aren't any more references to the temporary file in the file system. Such a temporary file could also probably be in a RAM based file system.
+* For dynamic languages, `libstapsdt` seems great, but it feels a bit hackish since it creates a temporary file for the stub. Perhaps uprobes can be created after the temporary file is dlopen'ed and then the file can be unlinked if it hasn't been already, so that there aren't any more references to the temporary file in the file system. Such a temporary file could also probably be in a RAM based file system perhaps.
 
 References
 ----------
@@ -104,7 +104,7 @@ References
 2. [Uprobe tracer in the kernel](https://www.kernel.org/doc/Documentation/trace/uprobetracer.txt)
 3. [USDT for dynamic languages](https://medium.com/sthima-insights/we-just-got-a-new-super-power-runtime-usdt-comes-to-linux-814dc47e909f)
 4. [Sasha Goldstein's "Next Generation Linux Tracing With BPF" article](https://dzone.com/articles/next-generation-linux-tracing)
-
+5. [SystemTap SDT implementation](https://sourceware.org/systemtap/wiki/UserSpaceProbeImplementation)
 
 
 
